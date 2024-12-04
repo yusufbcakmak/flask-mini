@@ -1,13 +1,17 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify,request,jsonify
+from amazon_search import search_amazon
 import os
 
 app = Flask(__name__)
 
+@app.route('/search', methods=['GET'])
+def search():
+    keyword = request.args.get('keyword')
+    if not keyword:
+        return jsonify({"error": "Keyword is required"}), 400
+    
+    results = search_amazon(keyword)
+    return jsonify(results)
 
-@app.route('/')
-def index():
-    return jsonify({"Choo Choo": "Welcome to your Flask app 🚅"})
-
-
-if __name__ == '__main__':
-    app.run(debug=True, port=os.getenv("PORT", default=5000))
+if __name__ == "__main__":
+    app.run(debug=True)
